@@ -10,7 +10,7 @@ import cohere
 # -------------------------------------
 # Your Deployment Link:
 SITEMAP_URL = "https://humanoid-robotic-course-book.vercel.app/sitemap.xml"
-COLLECTION_NAME = "humanoid_ai_book"
+COLLECTION_NAME = "humanoid_ai_course_book"
 
 cohere_client = cohere.Client("CRPmtkTBubmFr7O9bpJyIPX2uNS347M8wy11UQJd")
 EMBED_MODEL = "embed-english-v3.0"
