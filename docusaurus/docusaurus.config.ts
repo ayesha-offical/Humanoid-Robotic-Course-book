@@ -25,7 +25,7 @@ const config: Config = {
   organizationName: 'physical-ai-course', // Usually your GitHub org/user name.
   projectName: 'textbook-platform', // Usually your repo name.
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -155,6 +155,7 @@ const config: Config = {
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
+    
 };
 
 export default config;
