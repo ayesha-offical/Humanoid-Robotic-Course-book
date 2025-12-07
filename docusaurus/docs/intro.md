@@ -103,4 +103,4 @@ Physical AI simulates reality, which is computationally expensive.
 
 Start your journey by setting up your development environment.
 
-<a className="button button--primary button--lg" href="/docs/module-1-ros2/week-3-ros2-architecture">Start Module 1 →</a>
+<a className="button button--primary button--lg" href="/docs/module-0-foundations/week-1-2-physical-ai.md">Start Modules →</a>
