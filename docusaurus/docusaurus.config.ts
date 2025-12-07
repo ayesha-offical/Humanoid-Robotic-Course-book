@@ -99,7 +99,7 @@ const config: Config = {
           position: 'right',
         },
         {
-          href: 'https://github.com/ayesha-offical',
+          href: 'https://github.com/ayesha-offical/Humanoid-Robotic-Course-book',
           label: 'GitHub',
           position: 'right',
         },
@@ -122,7 +122,7 @@ const config: Config = {
           items: [
             {
               label: 'Github',
-              href: 'https://github.com/ayesha-offical',
+              href: 'https://github.com/ayesha-offical/Humanoid-Robotic-Course-book',
             },
             {
               label: 'LinkedIn',
@@ -140,7 +140,7 @@ const config: Config = {
             
             {
               label: 'GitHub',
-              href: 'https://github.com/ayesha-offical',
+              href: 'https://github.com/ayesha-offical/Humanoid-Robotic-Course-book',
             },
           ],
         },
