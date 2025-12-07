@@ -12,15 +12,16 @@ function HomepageHeader() {
   return (
     <header className={clsx('hero', styles.heroBanner)}>
       <div className="container">
-        <Heading as="h1" className={styles.heroTitle}>
+        <Heading as="h1" className={clsx(styles.heroTitle, 'hero-animate')} style={{ animationDelay: '0s' }}>
           Physical AI & Humanoid Robotics Textbook
         </Heading>
-        <p className={styles.heroSubtitle}>
+        <p className={clsx(styles.heroSubtitle, 'hero-animate')} style={{ animationDelay: '0.2s' }}>
           A complete and practical learning system where you master the future: humanoid robotics, ROS 2, large action models, simulation, VLA systems, hardware, and advanced AI for next-generation intelligent machines.
         </p>
         <div className={styles.buttons}>
           <Link
-            className={clsx("button", styles.buttonPrimary)}
+            className={clsx("button", styles.buttonPrimary, 'hero-animate')}
+            style={{ animationDelay: '0.4s' }}
             to="/docs/intro">
             Start Reading →
           </Link>
