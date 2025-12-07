@@ -1,9 +1,9 @@
 ---
-id: week-1-2-physical-ai
-"title": Weeks 1-2: Foundations of Physical AI
-"sidebar_label": Weeks 1-2: Foundations
-"sidebar_position": 1
-"description": Introduction to Embodied Intelligence and the sensor systems that power humanoid robots.
+id: "week-1-2-physical-ai"
+title: Weeks 1-2: "Foundations of Physical AI"
+sidebar_label: Weeks 1-2: "Foundations"
+sidebar_position: "1"
+description: "Introduction to Embodied Intelligence and the sensor systems that power humanoid robots."
 ---
 
 # 🏗️ Foundations of Physical AI & Embodied Intelligence
