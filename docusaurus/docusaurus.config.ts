@@ -15,7 +15,7 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://physical-ai-textbook.example.com',
+  url: 'https://humanoid-robotic-course-book.vercel.app',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -44,7 +44,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/ayesha-offical',
         },
         blog: {
           showReadingTime: true,
@@ -55,7 +55,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/ayesha-offical',
           // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
@@ -70,7 +70,7 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/mylogo.png',
     colorMode: {
       respectPrefersColorScheme: true,
     },
@@ -85,9 +85,9 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Curriculum',
+          label: 'Text Book',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
+        // {to: '/blog', label: '', position: 'left'},
         {
           to: '/#language',
           label: '🌐 Language',
@@ -99,7 +99,7 @@ const config: Config = {
           position: 'right',
         },
         {
-          href: 'https://github.com/physical-ai-course/textbook-platform',
+          href: 'https://github.com/ayesha-offical',
           label: 'GitHub',
           position: 'right',
         },
@@ -121,16 +121,16 @@ const config: Config = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              label: 'Github',
+              href: 'https://github.com/ayesha-offical',
             },
             {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
+              label: 'LinkedIn',
+              href: 'https://www.linkedin.com/in/ayesha-faisal25/',
             },
             {
               label: 'X',
-              href: 'https://x.com/docusaurus',
+              href: 'https://x.com/1ayeshafaisal',
             },
           ],
         },
@@ -143,7 +143,7 @@ const config: Config = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/ayesha-offical',
             },
           ],
         },
