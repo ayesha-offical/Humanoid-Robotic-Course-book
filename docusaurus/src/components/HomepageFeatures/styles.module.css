@@ -1,0 +1,172 @@
+.modules {
+  padding: 4rem 0;
+  background-color: var(--ifm-background-surface);
+}
+
+.modulesHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: var(--ifm-heading-color);
+}
+
+.sectionSubtitle {
+  font-size: 1.1rem;
+  color: var(--ifm-text-color-secondary);
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.moduleCol {
+  display: flex;
+  margin-bottom: 2rem;
+}
+
+.moduleCard {
+  flex: 1;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--ifm-color-gray-300);
+  background: var(--ifm-background-surface);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.moduleCard:hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.moduleIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.moduleTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: var(--ifm-heading-color);
+}
+
+.moduleSubtitle {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ifm-color-primary);
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+.moduleDescription {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ifm-text-color-secondary);
+  flex: 1;
+}
+
+.features {
+  padding: 4rem 0;
+  background-color: var(--ifm-background-surface-secondary);
+}
+
+.featureCol {
+  display: flex;
+  margin-bottom: 2rem;
+}
+
+.featureBox {
+  flex: 1;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  background: var(--ifm-background-surface);
+  border: 1px solid var(--ifm-color-gray-300);
+  transition: all 0.3s ease;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.featureBox:hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.featureIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.featureBox h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--ifm-heading-color);
+}
+
+.featureBox p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ifm-text-color-secondary);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 996px) {
+  .sectionTitle {
+    font-size: 2rem;
+  }
+
+  .moduleCard {
+    padding: 1.5rem;
+  }
+
+  .featureBox {
+    padding: 1.5rem;
+  }
+
+  .moduleIcon,
+  .featureIcon {
+    font-size: 2.5rem;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .modules {
+    padding: 2rem 0;
+  }
+
+  .features {
+    padding: 2rem 0;
+  }
+
+  .sectionTitle {
+    font-size: 1.6rem;
+  }
+
+  .sectionSubtitle {
+    font-size: 0.95rem;
+  }
+
+  .moduleCard,
+  .featureBox {
+    padding: 1rem;
+  }
+
+  .moduleIcon,
+  .featureIcon {
+    font-size: 2rem;
+  }
+
+  .moduleTitle {
+    font-size: 1.1rem;
+  }
+}
