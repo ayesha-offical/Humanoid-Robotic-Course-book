@@ -1,5 +1,5 @@
 ---
-"id": week-1-2-physical-ai
+id: week-1-2-physical-ai
 "title": Weeks 1-2: Foundations of Physical AI
 "sidebar_label": Weeks 1-2: Foundations
 "sidebar_position": 1
