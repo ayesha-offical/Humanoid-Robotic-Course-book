@@ -6,7 +6,7 @@ from typing import Optional
 from dotenv import load_dotenv
 import logging
 
-from agent import run_agent, save_chat_history
+from agent import run_agent, save_chat_history, TextbookAgent
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -46,7 +46,11 @@ class ChatResponse(BaseModel):
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
-    return {"status": "ok", "message": "Server is running"}
+    return {
+        "status": "ok",
+        "message": "Server is running",
+        "agent": "TextbookAgent (Agentic RAG with OpenAI Function Calling)"
+    }
 
 
 @app.post("/chat", response_model=ChatResponse)
@@ -71,23 +75,23 @@ async def chat_endpoint(request: ChatRequest):
                 detail="User ID is required"
             )
 
-        # Determine context source and run agent
+        # Create agent instance
+        agent = TextbookAgent()
+        logger.info(f"TextbookAgent created for user {request.user_id}")
+
+        # Run agent - it autonomously decides to call search_textbook tool
         if request.selected_text and request.selected_text.strip():
-            logger.info(f"Using selected text for user {request.user_id}")
-            response_text = run_agent(
+            logger.info(f"Agent operating in SELECTED_TEXT mode for user {request.user_id}")
+            response_text, source = agent.think(
                 question=request.message,
-                selected_text=request.selected_text,
-                use_rag=False
+                selected_text=request.selected_text
             )
-            source = "selected_text"
         else:
-            logger.info(f"Using RAG for user {request.user_id}")
-            response_text = run_agent(
+            logger.info(f"Agent operating in RAG mode for user {request.user_id}")
+            response_text, source = agent.think(
                 question=request.message,
-                selected_text=None,
-                use_rag=True
+                selected_text=None
             )
-            source = "rag"
 
         # Save chat history to Neon DB (non-blocking, handles failures gracefully)
         try:
