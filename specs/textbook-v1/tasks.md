@@ -2,8 +2,9 @@
 
 **Input**: Design documents from `/specs/textbook-v1/`
 **Prerequisites**: plan.md, spec.md
-**Total Tasks**: 80+ atomic tasks (15-30 mins each)
+**Total Tasks**: 104 atomic tasks (15-30 mins each)
 **Target**: Core RAG Chatbot Implementation
+**Note**: Phase 2.5 (FastAPI Implementation) is NEW and BLOCKING for Phase 3
 
 **Organization**: Tasks grouped by phase to enable independent, parallel implementation.
 
@@ -86,6 +87,78 @@
 - [ ] T037 Create example `.devcontainer.json` for VSCode development in both backend/ and docosaurus/
 
 **Checkpoint**: Foundation ready - core RAG work can start ✅
+
+---
+
+## Phase 2.5: FastAPI Implementation (NEW - BLOCKING)
+
+**Purpose**: Expose existing RAG agent logic via FastAPI backend
+
+**Timeline**: Immediate, blocking for Phase 3
+
+**Dependencies**: Existing `backend/rag_agent.py` and embedding logic must be complete
+
+### P2.5.1: Pydantic Models & Request/Response Schemas
+
+- [X] T097 Create `backend/models.py` with Pydantic models for Chat Request/Response:
+  - `ChatRequest`: fields: query (str), session_id (optional str)
+  - `ChatResponse`: fields: answer (str), sources (list), confidence (float), latency_ms (int)
+  - `HealthResponse`: fields: status (str), uptime_seconds (int)
+  - Add input validation (query length limits, type checking)
+
+### P2.5.2: Router & Endpoints
+
+- [X] T098 Create `backend/router.py` with FastAPI APIRouter:
+  - `POST /chat`: Accept ChatRequest, call RAG agent, return ChatResponse
+  - Input validation: query length (5-2000 chars), error handling
+  - Integrate existing `rag_agent.py` logic into endpoint handler
+  - Add request/response logging
+
+### P2.5.3: FastAPI Application Entry Point
+
+- [X] T099 Create `backend/api.py` (main FastAPI app):
+  - Initialize FastAPI app with title, description, version
+  - Configure CORS middleware to allow Docosaurus frontend access:
+    - Allow origins: `http://localhost:3000`, `http://localhost:8000`, production domain
+    - Allow methods: GET, POST, OPTIONS
+    - Allow headers: Content-Type, Authorization
+  - Mount router (T098) at `/api`
+  - Add health check endpoint `GET /health`
+  - Add error handling middleware for global exception catching
+  - Configure logging and request tracking
+
+### P2.5.4: RAG Agent Integration
+
+- [X] T100 [P] Integrate `backend/rag_agent.py` into `backend/router.py`:
+  - Import existing Agent class from rag_agent.py
+  - Create wrapper function in router: `query_rag_agent(query: str) -> dict`
+  - Handle async execution if agent is async
+  - Extract answer, sources, confidence from agent response
+  - Add error handling for agent failures (timeout, API errors)
+  - Add request timeout protection (max 30 seconds per query)
+
+- [X] T101 [P] Create `backend/config.py`:
+  - Load environment variables (OPENAI_API_KEY, QDRANT_URL, QDRANT_API_KEY)
+  - Configure logger settings
+  - Set request timeouts, CORS origins, API rate limits
+  - Use Pydantic Settings for type-safe configuration
+
+### P2.5.5: Testing & Validation
+
+- [X] T102 Create unit tests in `backend/tests/test_api.py`:
+  - Test POST /chat with valid query → verify ChatResponse structure
+  - Test POST /chat with invalid query (too short/long) → verify validation errors
+  - Test POST /chat endpoint handles rag_agent errors gracefully
+  - Test GET /health endpoint returns healthy status
+
+- [X] T103 Create integration test `backend/tests/test_integration.py`:
+  - Start FastAPI app (uvicorn)
+  - Send 5 sample queries to POST /chat
+  - Verify responses have all required fields
+  - Verify CORS headers are set correctly
+  - Verify latency is <5 seconds per query
+
+**Checkpoint**: FastAPI backend exposes RAG agent, ready for frontend integration ✅
 
 ---
 
