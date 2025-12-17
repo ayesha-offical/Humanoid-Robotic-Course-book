@@ -93,3 +93,34 @@ coverage/
 .specify/memory/
 history/
 specs/
+
+# ROS 2 / Robotics
+install/
+devel/
+.catkin_tools/
+.rosettastone/
+*.py.orig
+
+# Testing & Coverage
+htmlcov/
+.tox/
+.nox/
+
+# Database & Cache
+*.db
+*.sqlite
+*.sqlite3
+redis/
+.cache/
+
+# Lock Files (optional - check with team)
+# poetry.lock
+# Pipfile.lock
+
+# Additional Security
+secrets/
+credentials.json
+.aws/
+.gcp/
+*.key
+*.pem

@@ -20,7 +20,9 @@ interface TranslationState {
   error: string | null;
 }
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_URL = typeof window !== 'undefined'
+  ? (window as any).__API_URL || 'http://localhost:8000'
+  : 'http://localhost:8000';
 
 export const useTranslation = () => {
   const [state, setState] = useState<TranslationState>({

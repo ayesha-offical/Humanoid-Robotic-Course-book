@@ -3,6 +3,22 @@
  * and scoped locally.
  */
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:global(.hero-animate) {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
+}
+
 .heroBanner {
   padding: 5rem 2rem;
   text-align: center;
@@ -42,6 +58,23 @@
 
 .buttonPrimary:hover {
   background-color: #0284c7 !important;
+}
+
+.buttonSecondary {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border: 2px solid white !important;
+  padding: 0.75rem 2rem !important;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.buttonSecondary:hover {
+  background-color: white !important;
+  color: #0ea5e9 !important;
+  border-color: white !important;
 }
 
 @media screen and (max-width: 996px) {

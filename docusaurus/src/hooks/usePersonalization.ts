@@ -16,9 +16,11 @@ interface PersonalizationState {
   error: string | null;
 }
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_URL = typeof window !== 'undefined'
+  ? (window as any).__API_URL || 'http://localhost:8000'
+  : 'http://localhost:8000';
 
-export const usePersonalization = (token: string | null) => {
+export const usePersonalization = () => {
   const [state, setState] = useState<PersonalizationState>({
     profile: null,
     level: null,
@@ -27,15 +29,52 @@ export const usePersonalization = (token: string | null) => {
   });
 
   const getPersonalizationLevel = useCallback(async () => {
-    if (!token) {
-      return null;
+    // Load personalization profile from localStorage if available
+    const savedProfile = localStorage.getItem('userBackground');
+    if (savedProfile) {
+      try {
+        const parsed = JSON.parse(savedProfile);
+        const profile: PersonalizationProfile = {
+          user_id: 'guest',
+          hardware_background: parsed.hardware || 'beginner',
+          software_background: parsed.software || 'none',
+          personalization_enabled: true,
+          language: 'en',
+          theme: 'light',
+        };
+
+        // Determine personalization level based on backgrounds
+        let level: 'beginner' | 'intermediate' | 'advanced' = 'beginner';
+        if (
+          profile.hardware_background.includes('advanced') ||
+          profile.software_background.includes('advanced')
+        ) {
+          level = 'advanced';
+        } else if (
+          profile.hardware_background.includes('intermediate') ||
+          profile.software_background.includes('intermediate')
+        ) {
+          level = 'intermediate';
+        }
+
+        setState((prev) => ({
+          ...prev,
+          profile,
+          level,
+          isLoading: false,
+        }));
+
+        return { profile, level };
+      } catch (error) {
+        console.error('Failed to parse saved profile:', error);
+      }
     }
 
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
     try {
       const response = await fetch(`${API_URL}/api/personalize/profile`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
 
@@ -77,20 +116,15 @@ export const usePersonalization = (token: string | null) => {
       }));
       return null;
     }
-  }, [token]);
+  }, []);
 
   const setPersonalizationEnabled = useCallback(
     async (enabled: boolean) => {
-      if (!token) {
-        return false;
-      }
-
       setState((prev) => ({ ...prev, isLoading: true, error: null }));
       try {
         const response = await fetch(`${API_URL}/api/personalize/profile`, {
           method: 'PUT',
           headers: {
-            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -122,7 +156,7 @@ export const usePersonalization = (token: string | null) => {
         return false;
       }
     },
-    [token]
+    []
   );
 
   return {

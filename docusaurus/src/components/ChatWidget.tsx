@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useChat } from '../hooks/useChat';
 
-interface ChatbotWidgetProps {
+interface ChatWidgetProps {
   personalized?: boolean;
 }
 
-export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({
+export const ChatWidget: React.FC<ChatWidgetProps> = ({
   personalized = false,
 }) => {
   const { messages, isLoading, error, chat, clearChat } = useChat();

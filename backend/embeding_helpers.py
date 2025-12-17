@@ -1,25 +1,26 @@
-import requests
-import xml.etree.ElementTree as ET
-import trafilatura
 from qdrant_client import QdrantClient
 from qdrant_client.models import VectorParams, Distance, PointStruct
+import os
+import trafilatura
+import xml.etree.ElementTree as ET
 import cohere
-import time
+import requests
+from dotenv import load_dotenv
+load_dotenv()
+qdrant_api_key = os.getenv("QDRANT_API_KEY")
+qdrant_url = os.getenv("QDRANT_URL")
+cohere_api_key = os.getenv("COHERE_API_KEY")
 
-# -------------------------------------
-# CONFIG
-# -------------------------------------
-SITEMAP_URL = "https://humanoid-robotic-course-book.vercel.app/sitemap.xml"
-COLLECTION_NAME = "humanoid_ai_course_book"
+COLLECTION_NAME = os.getenv("COLLECTION_NAME")
 
-# ⚠️ APNI KEYS YAHAN WAPAS PASTE KARNA ⚠️
-cohere_client = cohere.Client("CRPmtkTBubmFr7O9bpJyIPX2uNS347M8wy11UQJd")
+
+cohere_client = cohere.Client(cohere_api_key)
 EMBED_MODEL = "embed-english-v3.0"
 
 # Connect to Qdrant Cloud
 qdrant = QdrantClient(
-    url="https://8fda3468-1811-4e03-ab6a-28c4ec0c2a0f.us-east4-0.gcp.cloud.qdrant.io:6333", 
-    api_key="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0._xXiPjwexglperAdMm9bGCfT-nyt9OwkP9hu9P8TWRE",
+url=qdrant_url, 
+    api_key=qdrant_api_key,
 )
 
 # -------------------------------------
@@ -72,19 +73,17 @@ def chunk_text(text, max_chars=1000):
     while start < text_len:
         end = start + max_chars
         
-        # Agar end text se bara ho jaye
+        
         if end >= text_len:
             chunks.append(text[start:])
             break
-            
-        # Koshish karo sentence ke end (.) par tornay ki
+     
         split_pos = text.rfind('. ', start, end)
         
-        # Agar '.' na mile, to space ' ' dhoondo
         if split_pos == -1:
             split_pos = text.rfind(' ', start, end)
             
-        # Agar wo bhi na mile, to hard cut kardo
+    
         if split_pos == -1:
             split_pos = end
         else:
@@ -92,13 +91,11 @@ def chunk_text(text, max_chars=1000):
 
         chunk = text[start:split_pos].strip()
         
-        # Sirf tab add karo agar chunk empty na ho
+        
         if chunk:
             chunks.append(chunk)
         
         # Move start pointer forward
-        # CRITICAL FIX: Agar split_pos aage nahi barha, to force move karo
-        if split_pos <= start:
             start = end
         else:
             start = split_pos
@@ -109,25 +106,13 @@ def chunk_text(text, max_chars=1000):
 # Step 4 — Create embedding
 # -------------------------------------
 def embed(text):
-    # --- RATE LIMIT FIX ---
-    # Cohere Trial Key sirf 40 calls/min allow karti hai.
-    # Isliye hum har call ke baad 2 second rukenge.
-    time.sleep(2) 
+    response = cohere_client.embed(
+        model=EMBED_MODEL,
+        input_type="search_query",  # Use search_query for queries
+        texts=[text],
+    )
+    return response.embeddings[0]
     
-    try:
-        response = cohere_client.embed(
-            model=EMBED_MODEL,
-            input_type="search_query",
-            texts=[text],
-        )
-        return response.embeddings[0]
-    except Exception as e:
-        print(f"⚠️ Embed Error: {e}")
-        # Agar error aaye to thora lamba wait karke retry logic (optional)
-        # Filhal hum empty list return kar dete hain taake script crash na ho
-        time.sleep(5)
-        return []
-# -------------------------------------
 # Step 5 — Store in Qdrant
 # -------------------------------------
 def create_collection():
@@ -161,52 +146,3 @@ def save_chunk_to_qdrant(chunk, chunk_id, url):
             )
         ]
     )
-
-# -------------------------------------
-# MAIN INGESTION PIPELINE
-# -------------------------------------
-def ingest_book():
-    print("Fetching URLs...")
-    urls = get_all_urls(SITEMAP_URL)
-    
-    # --- FILTERING LOGIC ---
-    # Sirf kaam ke URLs rakho
-    filtered_urls = []
-    for u in urls:
-        if "tutorial" in u or "blog" in u or "markdown-page" in u or "tags" in u:
-            continue
-        filtered_urls.append(u)
-    
-    print(f"\nFiltered URLs count: {len(filtered_urls)} (Original: {len(urls)})")
-    for u in filtered_urls:
-        print(" -", u)
-
-    create_collection()
-
-    global_id = 1
-
-    for url in filtered_urls:
-        print(f"\nProcessing: {url}")
-        
-        # Try-Except block to prevent crash
-        try:
-            text = extract_text_from_url(url)
-            if not text: continue
-
-            chunks = chunk_text(text)
-            print(f" -> Generated {len(chunks)} chunks.")
-
-            for ch in chunks:
-                save_chunk_to_qdrant(ch, global_id, url)
-                if global_id % 5 == 0: # Thora kam print karo console clean rakhne ke liye
-                    print(f"   Saved chunk {global_id}...", end="\r")
-                global_id += 1
-                
-        except Exception as e:
-            print(f"⚠️ Error processing page {url}: {e}")
-            continue # Agle URL par jao
-
-    print(f"\n\n✔️ Ingestion completed! Total chunks: {global_id - 1}")
-
-if __name__ == "__main__":
-    ingest_book()

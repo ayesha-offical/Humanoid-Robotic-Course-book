@@ -1,0 +1,146 @@
+name: Frontend Build & Lighthouse
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'docusaurus/**'
+      - '.github/workflows/frontend-build.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'docusaurus/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['18.x', '20.x']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: 'docusaurus/package-lock.json'
+
+      - name: Install dependencies
+        run: |
+          cd docosaurus
+          npm ci
+
+      - name: Lint with ESLint
+        run: |
+          cd docosaurus
+          npm run lint -- --max-warnings 0
+
+      - name: Format check with Prettier
+        run: |
+          cd docosaurus
+          npm run format:check
+
+      - name: Build Docosaurus
+        run: |
+          cd docosaurus
+          npm run build
+
+      - name: Check for build warnings
+        run: |
+          cd docosaurus
+          npm run build 2>&1 | tee build.log
+          if grep -i "warning" build.log; then
+            echo "Build warnings found!"
+            exit 1
+          fi
+
+  lighthouse:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+          cache-dependency-path: 'docosaurus/package-lock.json'
+
+      - name: Install dependencies
+        run: |
+          cd docosaurus
+          npm ci
+
+      - name: Build for Lighthouse
+        run: |
+          cd docosaurus
+          npm run build
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          configPath: './docosaurus'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          configPath: '.lighterhouserc.json'
+
+      - name: Comment PR with Lighthouse results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('./.lighthouseci/desktop.json', 'utf8'));
+            const summary = results.scores;
+            const comment = `
+            ## Lighthouse Report
+
+            | Category | Score |
+            |----------|-------|
+            | Performance | ${Math.round(summary.performance * 100)} |
+            | Accessibility | ${Math.round(summary.accessibility * 100)} |
+            | Best Practices | ${Math.round(summary['best-practices'] * 100)} |
+            | SEO | ${Math.round(summary.seo * 100)} |
+            | PWA | ${Math.round(summary.pwa * 100)} |
+
+            ✅ Lighthouse checks passed!
+            `;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+          cache-dependency-path: 'docosaurus/package-lock.json'
+
+      - name: Install dependencies
+        run: |
+          cd docosaurus
+          npm ci
+
+      - name: Run npm audit
+        run: |
+          cd docosaurus
+          npm audit --audit-level=moderate
+
+      - name: Check for dependency vulnerabilities with Snyk
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --file=docusaurus/package.json --severity-threshold=high

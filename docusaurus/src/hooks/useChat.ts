@@ -20,9 +20,11 @@ interface ChatState {
   sessionId: string | null;
 }
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_URL = typeof window !== 'undefined'
+  ? (window as any).__API_URL || 'http://localhost:8000'
+  : 'http://localhost:8000';
 
-export const useChat = (token: string | null) => {
+export const useChat = () => {
   const [state, setState] = useState<ChatState>({
     messages: [],
     isLoading: false,
@@ -34,22 +36,20 @@ export const useChat = (token: string | null) => {
     async (
       query: string,
       sessionId?: string | null,
-      personalize: boolean = false
+      personalize: boolean = false,
+      selectedText?: string | null
     ): Promise<ChatResponse | null> => {
       setState((prev) => ({ ...prev, isLoading: true, error: null }));
       try {
-        if (!token) {
-          throw new Error('Authentication required');
-        }
-
         const response = await fetch(`${API_URL}/api/ask`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            query,
+            message: query,
+            selected_text: selectedText || null,
+            user_id: 'guest_user',
             session_id: sessionId || undefined,
             personalize,
           }),
@@ -84,34 +84,53 @@ export const useChat = (token: string | null) => {
         return null;
       }
     },
-    [token]
+    []
   );
 
   const streamChat = useCallback(
-    async (query: string, sessionId?: string | null) => {
+    async (query: string, sessionId?: string | null, selectedText?: string | null) => {
       setState((prev) => ({ ...prev, isLoading: true, error: null }));
       try {
-        if (!token) {
-          throw new Error('Authentication required');
-        }
+        const wsUrl = new URL(API_URL.replace('http', 'ws') + '/ws/chat');
 
-        const ws = new WebSocket(
-          `${API_URL.replace('http', 'ws')}/ws/chat`
-        );
+        const ws = new WebSocket(wsUrl.toString());
 
         return new Promise<void>((resolve, reject) => {
           let fullResponse = '';
+          let messageTimeout: NodeJS.Timeout;
 
           ws.onopen = () => {
+            // Clear any existing timeout
+            if (messageTimeout) clearTimeout(messageTimeout);
+
             ws.send(
               JSON.stringify({
-                query,
+                message: query,
+                selected_text: selectedText || null,
+                user_id: 'guest_user',
                 session_id: sessionId || undefined,
               })
             );
+
+            // Set timeout for message processing
+            messageTimeout = setTimeout(() => {
+              if (ws.readyState === WebSocket.OPEN) {
+                ws.close();
+              }
+              reject(new Error('WebSocket message timeout'));
+            }, 60000); // 60 second timeout
           };
 
           ws.onmessage = (event) => {
+            // Reset timeout on message
+            if (messageTimeout) clearTimeout(messageTimeout);
+            messageTimeout = setTimeout(() => {
+              if (ws.readyState === WebSocket.OPEN) {
+                ws.close();
+              }
+              reject(new Error('WebSocket message timeout'));
+            }, 60000);
+
             const chunk = JSON.parse(event.data);
             if (chunk.token) {
               fullResponse += chunk.token;
@@ -132,6 +151,7 @@ export const useChat = (token: string | null) => {
               });
             }
             if (chunk.done) {
+              if (messageTimeout) clearTimeout(messageTimeout);
               setState((prev) => ({
                 ...prev,
                 sessionId: chunk.session_id,
@@ -143,6 +163,7 @@ export const useChat = (token: string | null) => {
           };
 
           ws.onerror = (error) => {
+            if (messageTimeout) clearTimeout(messageTimeout);
             const errorMessage = 'WebSocket error';
             setState((prev) => ({
               ...prev,
@@ -150,6 +171,10 @@ export const useChat = (token: string | null) => {
               error: errorMessage,
             }));
             reject(error);
+          };
+
+          ws.onclose = () => {
+            if (messageTimeout) clearTimeout(messageTimeout);
           };
         });
       } catch (error) {
@@ -163,7 +188,7 @@ export const useChat = (token: string | null) => {
         throw error;
       }
     },
-    [token]
+    []
   );
 
   const clearChat = useCallback(() => {
