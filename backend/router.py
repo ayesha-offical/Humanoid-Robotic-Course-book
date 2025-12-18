@@ -9,6 +9,7 @@ from fastapi import APIRouter, HTTPException, Request
 from models import ChatRequest, ChatResponse, Source
 from config import settings
 from rag_agent import agent
+from agents import Runner
 from embeding_helpers import embed
 from qdrant_client import QdrantClient
 
@@ -41,16 +42,13 @@ async def query_rag_agent(query: str) -> dict:
     try:
         logger.info(f"Querying RAG agent with: {query[:100]}...")
 
-        # Call the agent (synchronously)
-        # The agent.run() method returns the agent's response
-        response = agent.run(query)
+        # Call the agent using Runner.run_sync() from agents SDK
+        # This is the proper way to invoke the agent with the OpenAI Agent SDK
+        result = Runner.run_sync(agent, input=query)
 
-        # Extract answer from response
-        # The response from Agent SDK is typically a string or dict with 'text' field
-        if isinstance(response, dict):
-            answer = response.get("text", str(response))
-        else:
-            answer = str(response)
+        # Extract answer from final_output
+        # Runner.run_sync() returns a result object with final_output field
+        answer = result.final_output if hasattr(result, 'final_output') else str(result)
 
         logger.info(f"RAG agent response: {answer[:100]}...")
 
