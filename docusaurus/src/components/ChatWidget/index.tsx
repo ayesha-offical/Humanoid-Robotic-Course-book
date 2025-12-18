@@ -22,7 +22,7 @@ const ChatWidget: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'Hello! I\'m your AI assistant for the Physical AI & Humanoid Robotics course. Ask me anything about ROS 2, Gazebo, Isaac Sim, or humanoid robotics!',
+      text: 'Hello! I\'m your AI assistant for the Physical AI & Humanoid Robotics course. Ask me anything about ROS 2, Gazebo, Isaac Sim, or humanoid robotics Course book!',
       sender: 'bot',
       timestamp: Date.now(),
     },
