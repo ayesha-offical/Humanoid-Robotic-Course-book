@@ -42,7 +42,7 @@ async def root():
 
 # Chat endpoint
 @app.post("/api/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest) -> ChatResponse:
+def chat(request: ChatRequest) -> ChatResponse:
     """
     Chat endpoint that accepts a message and returns a response.
 
