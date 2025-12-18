@@ -30,27 +30,27 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd docosaurus
+          cd docusaurus
           npm ci
 
       - name: Lint with ESLint
         run: |
-          cd docosaurus
+          cd docusaurus
           npm run lint -- --max-warnings 0
 
       - name: Format check with Prettier
         run: |
-          cd docosaurus
+          cd docusaurus
           npm run format:check
 
       - name: Build Docosaurus
         run: |
-          cd docosaurus
+          cd docusaurus
           npm run build
 
       - name: Check for build warnings
         run: |
-          cd docosaurus
+          cd docusaurus
           npm run build 2>&1 | tee build.log
           if grep -i "warning" build.log; then
             echo "Build warnings found!"
@@ -68,16 +68,16 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'npm'
-          cache-dependency-path: 'docosaurus/package-lock.json'
+          cache-dependency-path: 'docusaurus/package-lock.json'
 
       - name: Install dependencies
         run: |
-          cd docosaurus
+          cd docusaurus
           npm ci
 
       - name: Build for Lighthouse
         run: |
-          cd docosaurus
+          cd docusaurus
           npm run build
 
       - name: Run Lighthouse CI
@@ -126,16 +126,16 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'npm'
-          cache-dependency-path: 'docosaurus/package-lock.json'
+          cache-dependency-path: 'docusaurus/package-lock.json'
 
       - name: Install dependencies
         run: |
-          cd docosaurus
+          cd docusaurus
           npm ci
 
       - name: Run npm audit
         run: |
-          cd docosaurus
+          cd docusaurus
           npm audit --audit-level=moderate
 
       - name: Check for dependency vulnerabilities with Snyk

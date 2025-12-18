@@ -29,19 +29,19 @@ jobs:
         with:
           node-version: '18.x'
           cache: 'npm'
-          cache-dependency-path: 'docosaurus/package-lock.json'
+          cache-dependency-path: 'docusaurus/package-lock.json'
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Install dependencies
         run: |
-          cd docosaurus
+          cd docusaurus
           npm ci
 
       - name: Build with Docosaurus
         run: |
-          cd docosaurus
+          cd docusaurus
           npm run build
           echo "Build artifact path: ./build"
 
