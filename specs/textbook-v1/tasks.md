@@ -196,11 +196,11 @@
 
 ### P3.4: Frontend Chatbot Widget
 
-- [ ] T055 [P] Create ChatbotWidget component in `docosaurus/src/components/ChatbotWidget.tsx` (message list, input, send button)
-- [ ] T056 [P] Create useChat hook in `docosaurus/src/hooks/useChat.ts` (call `/api/ask`, manage state)
-- [ ] T057 [P] Implement streaming support in useChat hook (WebSocket or SSE)
-- [ ] T058 [P] Integrate ChatbotWidget into Docosaurus Root theme in `docosaurus/src/theme/Root.tsx`
-- [ ] T059 Create snapshot tests for ChatbotWidget in `docosaurus/tests/ChatbotWidget.test.tsx`
+- [X] T055 [P] Create ChatbotWidget component in `docosaurus/src/components/ChatWidget/` (message list, input, send button)
+- [X] T056 [P] Create useChat hook functionality integrated into ChatWidget component (call `/api/chat`, manage state)
+- [ ] T057 [P] Implement streaming support in ChatWidget (WebSocket or SSE)
+- [X] T058 [P] Integrate ChatWidget into Docosaurus Root theme in `docosaurus/src/theme/Root.tsx`
+- [ ] T059 Create snapshot tests for ChatWidget in `docosaurus/tests/ChatWidget.test.tsx`
 
 **Checkpoint**: Basic RAG chatbot working end-to-end ✅
 

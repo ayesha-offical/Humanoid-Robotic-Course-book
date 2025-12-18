@@ -44,24 +44,54 @@ async def root():
 @app.post("/api/chat", response_model=ChatResponse)
 def chat(request: ChatRequest) -> ChatResponse:
     """
-    Chat endpoint that accepts a message and returns a response.
+    Chat endpoint that accepts a query and returns an answer.
 
-    Uses Runner.run_sync() to invoke the RAG agent with the user's message.
+    Uses Runner.run_sync() to invoke the RAG agent with the user's query.
 
     Args:
-        request: ChatRequest with message and optional user_id
+        request: ChatRequest with query and optional session_id
 
     Returns:
-        ChatResponse with response text and optional citations
+        ChatResponse with answer text, sources, and metadata
     """
-    # Call the agent using Runner.run_sync() from agents SDK
-    result = Runner.run_sync(agent, input=request.message)
+    import time
+    import logging
 
-    # Extract the final output from the result
-    response_text = result.final_output if hasattr(result, 'final_output') else str(result)
+    logger = logging.getLogger(__name__)
+    start_time = time.time()
 
-    # Return ChatResponse with the agent's response
-    return ChatResponse(response=response_text, citations=None)
+    try:
+        # Call the agent using Runner.run_sync() from agents SDK
+        result = Runner.run_sync(agent, input=request.query)
+
+        # Extract the final output from the result
+        answer_text = result.final_output if hasattr(result, 'final_output') else str(result)
+
+        # Calculate latency
+        latency_ms = int((time.time() - start_time) * 1000)
+
+        logger.info(f"Chat query: {request.query[:50]}... -> latency: {latency_ms}ms")
+
+        # Return ChatResponse with the agent's response
+        return ChatResponse(
+            answer=answer_text,
+            sources=None,
+            citations=None,
+            confidence=0.8,
+            session_id=request.session_id,
+            latency_ms=latency_ms
+        )
+
+    except Exception as e:
+        logger.error(f"Error in chat endpoint: {str(e)}")
+        return ChatResponse(
+            answer=f"Error: {str(e)}. Please try again.",
+            sources=None,
+            citations=None,
+            confidence=0.0,
+            session_id=request.session_id,
+            latency_ms=int((time.time() - start_time) * 1000)
+        )
 
 
 if __name__ == "__main__":

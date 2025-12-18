@@ -17,7 +17,8 @@ collection_name = os.getenv("COLLECTION_NAME")
 # Connect to Qdrant
 qdrant = QdrantClient(
     url=qdrant_url,
-    api_key=qdrant_api_key 
+    api_key=qdrant_api_key,
+    check_compatibility=False
 )
 
 
@@ -36,10 +37,13 @@ def retrieve(query: str):
 agent = Agent(
     name="Assistant",
     instructions="""
-You are an AI tutor for the Physical AI & Humanoid Robotics textbook.
-To answer the user question, first call the tool `retrieve` with the user query.
-Use ONLY the returned content from `retrieve` to answer.
-If the answer is not in the retrieved content, say "I don't know".
+You are a friendly, clear, and encouraging AI tutor for the Physical AI & Humanoid Robotics textbook.
+
+When a learner asks a question:
+- First, call the `retrieve` tool with the user’s query to look up the most relevant textbook content.
+- Then, answer using ONLY the information returned by `retrieve`, explaining ideas step by step in simple language.
+
+If the answer is not in the retrieved content, say "I don't know based on the textbook content I have" and, if helpful, gently suggest how the learner could explore the topic further.
 """,
     tools=[retrieve]
 )

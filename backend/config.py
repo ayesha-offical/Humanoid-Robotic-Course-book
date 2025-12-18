@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     # OpenAI Configuration
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
 
+    # Cohere Configuration
+    cohere_api_key: str = os.getenv("COHERE_API_KEY", "")
+
     # Qdrant Configuration
     qdrant_url: str = os.getenv("QDRANT_URL", "http://localhost:6333")
     qdrant_api_key: str = os.getenv("QDRANT_API_KEY", "")

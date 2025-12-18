@@ -11,8 +11,9 @@ qdrant_url = os.getenv("QDRANT_URL")
 
 # Connect to Qdrant Cloud
 qdrant = QdrantClient(
-url=qdrant_url, 
-api_key=qdrant_api_key,
+    url=qdrant_url, 
+    api_key=qdrant_api_key,
+    check_compatibility=False
 )
 
 

@@ -19,8 +19,9 @@ EMBED_MODEL = "embed-english-v3.0"
 
 # Connect to Qdrant Cloud
 qdrant = QdrantClient(
-url=qdrant_url, 
+    url=qdrant_url, 
     api_key=qdrant_api_key,
+    check_compatibility=False
 )
 
 # -------------------------------------

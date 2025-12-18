@@ -21,7 +21,8 @@ router = APIRouter(prefix="/api", tags=["chat"])
 # Initialize Qdrant client for source retrieval
 qdrant_client = QdrantClient(
     url=settings.qdrant_url,
-    api_key=settings.qdrant_api_key
+    api_key=settings.qdrant_api_key,
+    check_compatibility=False
 )
 
 
