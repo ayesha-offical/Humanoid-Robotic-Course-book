@@ -1,7 +1,9 @@
 import os
+import time
 from embeding_helpers import get_all_urls, extract_text_from_url, chunk_text, save_chunk_to_qdrant, create_collection
 
 SITEMAP_URL = os.getenv("SITEMAP_URL")
+RATE_LIMIT_DELAY = 1.5  # 1.5 second delay between API calls (40 calls/min = ~1.5s per call)
 
 
 def ingest_book():
@@ -36,15 +38,16 @@ def ingest_book():
 
             for ch in chunks:
                 save_chunk_to_qdrant(ch, global_id, url)
-                if global_id % 5 == 0: 
+                if global_id % 5 == 0:
                     print(f"   Saved chunk {global_id}...", end="\r")
                 global_id += 1
+                time.sleep(RATE_LIMIT_DELAY)  # Rate limiting for Cohere API
                 
         except Exception as e:
-            print(f"⚠ Error processing page {url}: {e}")
+            print(f"! Error processing page {url}: {e}")
             continue 
 
-    print(f"\n\n✔ Ingestion completed! Total chunks: {global_id - 1}")
+    print(f"\n\n[SUCCESS] Ingestion completed! Total chunks: {global_id - 1}")
 
 if __name__ == "__main__":
     ingest_book()
