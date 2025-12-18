@@ -109,7 +109,7 @@ const ChatWidget: React.FC = () => {
       // Add error message to chat
       const errorMsg: Message = {
         id: `msg-${Date.now()}`,
-        text: `Error: ${errorMessage}. Please check if the backend is running at ${API_URL}`,
+        text: `Error: ${errorMessage}. Wait and refresh it will fix it.`,
         sender: 'bot',
         timestamp: Date.now(),
       };
