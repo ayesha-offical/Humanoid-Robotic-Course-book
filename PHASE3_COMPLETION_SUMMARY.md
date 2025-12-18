@@ -53,7 +53,7 @@ Phase 3 has been successfully completed with full GitHub OAuth 2.0 authenticatio
 
 ### 1. Enhanced useAuth Hook
 
-**File**: `docusaurus/src/hooks/useAuth.ts`
+**File**: `docosaurus/src/hooks/useAuth.ts`
 
 **New Methods Added**:
 ```typescript
@@ -71,7 +71,7 @@ Phase 3 has been successfully completed with full GitHub OAuth 2.0 authenticatio
 
 ### 2. GitHub OAuth Button Component
 
-**File**: `docusaurus/src/components/GitHubOAuthButton.tsx`
+**File**: `docosaurus/src/components/GitHubOAuthButton.tsx`
 
 **Features**:
 - One-click GitHub authentication

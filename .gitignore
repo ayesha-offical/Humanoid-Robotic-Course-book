@@ -63,10 +63,10 @@ Thumbs.db
 *.dll
 *.exe
 
-# Docusaurus
-docusaurus/.docusaurus/
-docusaurus/.cache-loader/
-docusaurus/build/
+# docosaurus
+docosaurus/.docusaurus/
+docosaurus/.cache-loader/
+docosaurus/build/
 
 # Logs
 *.log

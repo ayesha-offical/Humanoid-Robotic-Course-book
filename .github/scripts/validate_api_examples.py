@@ -27,7 +27,7 @@ API_PATTERNS = {
 
 def find_api_examples_in_docs() -> List[Tuple[Path, str, str]]:
     """Find all API examples in documentation."""
-    doc_path = Path('docusaurus/docs')
+    doc_path = Path('docosaurus/docs')
     examples = []
 
     if not doc_path.exists():
@@ -100,7 +100,7 @@ def main() -> int:
     invalid_count = 0
 
     for doc_file, code_block, full_example in examples:
-        print(f"Checking {doc_file.relative_to('docusaurus')}:")
+        print(f"Checking {doc_file.relative_to('docosaurus')}:")
 
         # Extract endpoints from the example
         endpoints = extract_endpoints(code_block)

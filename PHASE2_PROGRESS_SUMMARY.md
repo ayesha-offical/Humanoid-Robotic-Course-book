@@ -108,7 +108,7 @@
     - Network isolation
     - Volume management
 
-15. **`docusaurus/Dockerfile`** (25 lines)
+15. **docosaurus/Dockerfile`** (25 lines)
     - Node.js 18 builder stage
     - Nginx alpine runtime
     - Gzip compression
@@ -142,13 +142,13 @@
     - Development tools installation
     - Quick start guide
 
-20. **`docusaurus/.devcontainer/devcontainer.json`** (50 lines)
+20. **`docosaurus/.devcontainer/devcontainer.json`** (50 lines)
     - Node.js 18 image
     - VSCode extensions (ESLint, Prettier, React snippets)
     - Prettier and ESLint configuration
     - Port forwarding (3000, 3001)
 
-21. **`docusaurus/.devcontainer/post-create.sh`** (30 lines)
+21. **`docosaurus/.devcontainer/post-create.sh`** (30 lines)
     - npm dependency installation
     - .env.local setup with defaults
     - Husky/pre-commit setup
@@ -329,7 +329,7 @@ TOTAL: 11/23 (48%)
 ### Infrastructure
 - `backend/Dockerfile` - Backend containerization
 - `backend/docker-compose.yml` - Service orchestration
-- `docusaurus/Dockerfile` - Frontend containerization
+- `docosaurus/Dockerfile` - Frontend containerization
 - `examples/docker/Dockerfile.ros2-humble` - ROS 2 environment
 - `backend/.devcontainer/` - Backend dev environment
 - `docosaurus/.devcontainer/` - Frontend dev environment

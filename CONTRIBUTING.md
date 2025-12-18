@@ -89,7 +89,7 @@ uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 ### 3. Frontend Development
 
 ```bash
-cd docusaurus
+cd docosaurus
 
 # Install dependencies
 npm install
