@@ -88,19 +88,21 @@ const config: Config = {
           label: 'Text Book',
         },
         // {to: '/blog', label: '', position: 'left'},
-        {
-          to: '/#language',
-          label: '🌐 Language',
-          position: 'right',
-        },
-        {
-          to: '/#account',
-          label: '👤 Account',
-          position: 'right',
-        },
+        // Language switcher (commented out - implement when needed)
+        // {
+        //   to: '/language',
+        //   label: '🌐 Language',
+        //   position: 'right',
+        // },
+        // Account section (commented out - implement when auth is ready)
+        // {
+        //   to: '/account',
+        //   label: '👤 Account',
+        //   position: 'right',
+        // },
         {
           href: 'https://github.com/ayesha-offical/Humanoid-Robotic-Course-book',
-          label: 'GitHub',
+          label: '🔗 GitHub',
           position: 'right',
         },
       ],
