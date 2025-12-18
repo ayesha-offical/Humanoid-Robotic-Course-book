@@ -36,7 +36,7 @@ const ChatWidget: React.FC = () => {
   // Backend API URL - configurable via environment
   const API_URL = typeof window !== 'undefined' && (window as any).__CHAT_API_URL__
     ? (window as any).__CHAT_API_URL__
-    : 'http://localhost:8000/api/chat';
+    : 'https://ayeshamughal2513-humanoid-robotic-course-book.hf.space/api/chat';
 
   // Auto-scroll to latest message
   useEffect(() => {
