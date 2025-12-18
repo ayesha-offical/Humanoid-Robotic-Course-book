@@ -6,22 +6,26 @@ A unified AI-native platform combining a comprehensive 13-week curriculum with a
 
 This platform delivers:
 
-1. **Interactive Docosaurus Textbook**: Comprehensive 13-week curriculum covering:
+1. **🎨 Interactive Docosaurus Textbook**: Comprehensive 13-week curriculum with modern UI/UX:
    - Module 1: ROS 2 Foundations & Gazebo Simulation
    - Module 2: Control Systems & Motion Planning
    - Module 3: Embodied Perception & Vision (NVIDIA Isaac, VLA integration)
    - Module 4: Sim-to-Real Transfer & Deployment
    - Capstone: End-to-End Humanoid Project
+   - **UI Features**: Vibrant gradient themes, animated cards, responsive design, dark mode support
 
-2. **RAG Chatbot**: FastAPI backend powered by OpenAI Agents SDK with:
+2. **💬 AI-Powered RAG Chatbot**: FastAPI backend with state-of-the-art features:
    - Qdrant vector database for curriculum content indexing
    - Personalized learning paths based on user expertise
    - Urdu translation support for broader accessibility
    - Real-time Q&A via WebSocket streaming
+   - **Chat Widget**: Floating action button with pulsing animation, gradient bubbles, smooth transitions
 
-3. **Production Infrastructure**:
-   - GitHub Actions CI/CD
+3. **🏗️ Production Infrastructure**:
+   - GitHub Actions CI/CD pipelines
    - Comprehensive testing & monitoring
+   - Docker containerization for all services
+   - Environment-based configuration management
 
 ## 🚀 Quick Start
 
@@ -356,9 +360,369 @@ pip audit
 detect-secrets scan
 ```
 
-## 📝 Contributing
+## 📝 Code Documentation
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
+### Backend Code Structure
+
+#### Main Application (`backend/api.py`)
+```python
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+# Initialize FastAPI app with CORS, logging, and error handling
+app = FastAPI(
+    title="Physical AI Textbook API",
+    description="RAG chatbot for embodied AI curriculum",
+    version="1.0.0"
+)
+
+# CORS configuration for frontend access
+app.add_middleware(CORSMiddleware, ...)
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    """Returns system health status"""
+    return {"status": "healthy", "uptime_seconds": ...}
+
+# Chat endpoint (main RAG interface)
+@app.post("/api/chat")
+async def chat(request: ChatRequest) -> ChatResponse:
+    """
+    Process user query and return AI response with sources
+
+    Args:
+        request: ChatRequest with query string
+
+    Returns:
+        ChatResponse with answer, sources, confidence, latency
+    """
+    # 1. Validate input (5-2000 chars)
+    # 2. Retrieve relevant curriculum chunks from Qdrant
+    # 3. Call OpenAI Agents with context
+    # 4. Format response with citations
+```
+
+#### Models & Schemas (`backend/models.py`)
+```python
+from pydantic import BaseModel, Field
+
+class ChatRequest(BaseModel):
+    """User query for chatbot"""
+    query: str = Field(..., min_length=5, max_length=2000, description="User question")
+    session_id: Optional[str] = Field(None, description="Session identifier")
+
+class ChatResponse(BaseModel):
+    """Chatbot response with metadata"""
+    answer: str = Field(..., description="AI-generated answer")
+    sources: List[str] = Field(default_factory=list, description="Source references")
+    confidence: float = Field(..., ge=0, le=1, description="Response confidence score")
+    latency_ms: int = Field(..., ge=0, description="Response time in milliseconds")
+```
+
+#### RAG Agent (`backend/rag_agent.py`)
+```python
+from openai import OpenAI
+
+class RAGAgent:
+    """
+    Retrieval-Augmented Generation agent using OpenAI Agents SDK
+
+    Workflow:
+    1. User query → Retrieved from vector database
+    2. Relevant chunks → Passed as context to LLM
+    3. OpenAI Agents → Generate structured response
+    4. Format response → Return with sources and confidence
+    """
+
+    def __init__(self, api_key: str, qdrant_client):
+        self.client = OpenAI(api_key=api_key)
+        self.qdrant = qdrant_client
+
+    def query(self, question: str) -> dict:
+        """
+        Process user question through RAG pipeline
+
+        Args:
+            question: User's natural language question
+
+        Returns:
+            dict with answer, sources, confidence, latency
+        """
+        # 1. Retrieve top-5 relevant chunks from Qdrant
+        chunks = self.qdrant.search(question, limit=5)
+
+        # 2. Format context with metadata
+        context = self._format_context(chunks)
+
+        # 3. Call OpenAI Agents with tools and system prompt
+        response = self._call_agent(question, context)
+
+        # 4. Extract and format response
+        return self._parse_response(response, chunks)
+```
+
+#### Qdrant Vector Search (`backend/services/qdrant.py`)
+```python
+from qdrant_client import QdrantClient
+
+class QdrantService:
+    """
+    Vector database client for curriculum retrieval
+
+    Collection: curriculum_embeddings
+    - Vector dimension: 1536 (OpenAI embeddings)
+    - Metadata: module, topic, difficulty, source_url
+    """
+
+    def __init__(self, url: str, api_key: str):
+        self.client = QdrantClient(url, api_key=api_key)
+
+    def search(self, query: str, limit: int = 5) -> list:
+        """
+        Semantic search for relevant curriculum chunks
+
+        Args:
+            query: Natural language search query
+            limit: Number of results to return
+
+        Returns:
+            List of relevant chunks with metadata
+        """
+        # 1. Generate embedding for query using OpenAI
+        query_embedding = generate_embedding(query)
+
+        # 2. Search Qdrant collection
+        results = self.client.search(
+            collection_name="curriculum_embeddings",
+            query_vector=query_embedding,
+            limit=limit
+        )
+
+        # 3. Format results with metadata
+        return self._format_results(results)
+```
+
+### Frontend Code Structure
+
+#### Chat Widget Component (`docosaurus/src/components/ChatWidget/index.tsx`)
+```typescript
+import React, { useState, useRef, useEffect } from 'react';
+import './styles.css';
+
+/**
+ * ChatWidget Component
+ * Floating chat interface for RAG chatbot interaction
+ *
+ * Features:
+ * - Floating Action Button (FAB) with pulse animation
+ * - Message list with user/bot distinction
+ * - Auto-scrolling and auto-focus
+ * - Real-time API communication
+ * - Error handling and loading states
+ */
+interface Message {
+  id: string;
+  text: string;
+  sender: 'user' | 'bot';
+  citations?: string[];
+  timestamp: number;
+}
+
+interface ChatResponse {
+  answer: string;
+  sources?: string[];
+  confidence?: number;
+  latency_ms?: number;
+}
+
+const ChatWidget: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([/* initial message */]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to latest message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const sendMessage = async () => {
+    // 1. Validate input
+    if (!input.trim()) return;
+
+    // 2. Add user message to UI
+    const userMessage: Message = {
+      id: `msg-${Date.now()}`,
+      text: input,
+      sender: 'user',
+      timestamp: Date.now(),
+    };
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
+
+    try {
+      // 3. Call backend API
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: input }),
+      });
+
+      const data: ChatResponse = await response.json();
+
+      // 4. Add bot response with citations
+      const botMessage: Message = {
+        id: `msg-${Date.now()}`,
+        text: data.answer,
+        sender: 'bot',
+        citations: data.sources,
+        timestamp: Date.now(),
+      };
+      setMessages(prev => [...prev, botMessage]);
+    } catch (err) {
+      // Handle and display error
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <>
+      {/* FAB Button */}
+      <button
+        className="chat-widget-fab"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {isOpen ? '✕' : '💬'}
+      </button>
+
+      {/* Chat Window */}
+      {isOpen && (
+        <div className="chat-widget-window">
+          {/* Header */}
+          <div className="chat-widget-header">
+            <h3>AI Course Assistant</h3>
+          </div>
+
+          {/* Messages List */}
+          <div className="chat-widget-messages">
+            {messages.map(msg => (
+              <div key={msg.id} className={`message ${msg.sender}`}>
+                <div className="bubble">{msg.text}</div>
+                {msg.citations && (
+                  <div className="citations">
+                    {msg.citations.map((c, i) => (
+                      <a key={i} href={c}>{`Source ${i + 1}`}</a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input Area */}
+          <div className="input-area">
+            <textarea
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyPress={e => e.key === 'Enter' && sendMessage()}
+              placeholder="Ask me anything..."
+            />
+            <button onClick={sendMessage} disabled={isLoading}>
+              Send
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default ChatWidget;
+```
+
+#### Global Styles (`docosaurus/src/css/custom.css`)
+```css
+/**
+ * Global Theme Configuration
+ *
+ * Colors:
+ * - Primary: #10b981 (emerald green)
+ * - Secondary: #8b5cf6 (purple)
+ * - Dark mode: Optimized for accessibility
+ *
+ * Typography:
+ * - Font: Inter (sans-serif)
+ * - Size base: 16px
+ * - Line height: 1.7
+ *
+ * Animations:
+ * - Transitions: 0.3s-0.4s ease
+ * - Easing: cubic-bezier, ease-out
+ * - Effects: gradients, shadows, transforms
+ */
+
+:root {
+  /* Color palette */
+  --ifm-color-primary: #10b981;
+  --ifm-color-secondary: #8b5cf6;
+
+  /* Typography */
+  --ifm-font-family-base: 'Inter', sans-serif;
+  --ifm-font-size-base: 16px;
+  --ifm-line-height-base: 1.7;
+
+  /* Spacing */
+  --ifm-spacing-multiplier: 1.2;
+}
+
+/* Component Styles */
+.navbar { background: linear-gradient(...); }
+.footer { background: linear-gradient(...); }
+.chat-widget-fab { animation: pulse-gradient 2s infinite; }
+.module-card { transition: all 0.4s cubic-bezier(...); }
+```
+
+#### Home Page Features (`docosaurus/src/components/HomepageFeatures/`)
+```typescript
+/**
+ * HomepageFeatures Component
+ *
+ * Displays:
+ * - 6 Module cards with staggered animations
+ * - 3 Feature boxes with bottom accent animation
+ * - Gradient text effects on titles
+ * - Responsive grid layout
+ *
+ * Animations:
+ * - Module cards: fadeInUp (0.1s-0.6s staggered)
+ * - Icons: scale(1.1) + rotateY(180deg) on hover
+ * - Feature boxes: scaleX bottom border on hover
+ */
+
+const ModuleCard = ({ icon, title, subtitle, description }) => (
+  <div className={styles.moduleCard}>
+    <div className={styles.moduleIcon}>{icon}</div>
+    <h3 className={styles.moduleTitle}>{title}</h3>
+    <p className={styles.moduleSubtitle}>{subtitle}</p>
+    <p className={styles.moduleDescription}>{description}</p>
+  </div>
+);
+
+const FeatureBox = ({ icon, title, description }) => (
+  <div className={styles.featureBox}>
+    <div className={styles.featureIcon}>{icon}</div>
+    <h3>{title}</h3>
+    <p>{description}</p>
+  </div>
+);
+```
+
+## 📝 Contributing
 
 ### Code Standards
 
@@ -368,7 +732,264 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
 - **Tests**: All PRs must include tests
 - **Documentation**: Update docs for new features
 
+### Example Python Docstring
+```python
+def query_rag_agent(question: str, context: str) -> dict:
+    """
+    Query the RAG agent with context
+
+    Args:
+        question: User's natural language question
+        context: Relevant curriculum context
+
+    Returns:
+        dict: {
+            'answer': str,
+            'sources': list[str],
+            'confidence': float,
+            'latency_ms': int
+        }
+
+    Raises:
+        ValueError: If question is empty
+        TimeoutError: If response takes >30 seconds
+    """
+    pass
+```
+
+### Example TypeScript JSDoc
+```typescript
+/**
+ * Sends a message to the chatbot API
+ *
+ * @param message - The user's message content
+ * @param options - Optional configuration
+ * @returns Promise resolving to the bot's response
+ * @throws Error if API call fails
+ *
+ * @example
+ * const response = await sendMessage("How do I install ROS 2?");
+ * console.log(response.answer);
+ */
+async function sendMessage(
+  message: string,
+  options?: SendOptions
+): Promise<ChatResponse> {
+  // Implementation
+}
+```
+
+## 🏗️ Project Architecture
+
+### System Overview
+```
+User (Browser)
+    ↓
+Frontend (Docosaurus + React)
+├── Chat Widget (Floating UI)
+├── Homepage (Features, Modules)
+├── Curriculum Pages (Markdown content)
+└── Dark Mode Support
+    ↓ REST/WebSocket API
+Backend (FastAPI + Python)
+├── Chat Endpoint (/api/chat)
+├── RAG Agent (OpenAI Agents SDK)
+├── Vector Search (Qdrant Client)
+├── Error Handling & Logging
+└── Health Check
+    ↓ Vector/SQL Queries
+Data Layer
+├── Qdrant (curriculum_embeddings)
+└── PostgreSQL (optional, user profiles)
+```
+
+### Technology Stack
+| Layer | Technology | Version | Purpose |
+|-------|-----------|---------|---------|
+| **Frontend** | Docosaurus | 3.9.2 | Documentation site generator |
+| | React | 19.0.0 | UI component framework |
+| | TypeScript | 5.6.2 | Type-safe JavaScript |
+| | TailwindCSS | 3.4.1 | Utility-first CSS |
+| **Backend** | FastAPI | 0.104+ | Python web framework |
+| | Python | 3.10+ | Core runtime |
+| | OpenAI SDK | latest | Agents SDK integration |
+| | Qdrant SDK | latest | Vector database client |
+| **Data** | Qdrant | Cloud | Vector embeddings storage |
+| | PostgreSQL | latest | Optional, for user data |
+| **DevOps** | Docker | latest | Containerization |
+| | GitHub Actions | native | CI/CD automation |
+
+### Key Features
+
+#### 1. **Interactive Curriculum**
+- 13-week course with 50+ lessons
+- ROS 2, Gazebo, Isaac Sim, humanoid robotics
+- Copy-paste-run code examples
+- Video demonstrations included
+
+#### 2. **AI-Powered Chat Assistant**
+- RAG (Retrieval-Augmented Generation) pipeline
+- OpenAI Agents SDK for intelligent responses
+- Vector search for relevant curriculum chunks
+- Real-time response streaming
+- Source citations for transparency
+- Confidence scoring
+
+#### 3. **Modern UI/UX**
+- Vibrant emerald green color scheme
+- Gradient effects and smooth animations
+- Floating action button for chat
+- Dark mode with WCAG AA compliance
+- Fully responsive design
+- Smooth transitions and hover effects
+
+#### 4. **Developer Experience**
+- Type-safe Python with Pydantic
+- TypeScript for frontend components
+- Comprehensive error handling
+- Request/response logging
+- Interactive API docs (Swagger)
+- Docker for reproducibility
+
+## 📦 Key Files Explained
+
+### Backend Files
+
+**`backend/api.py`**
+- FastAPI application entry point
+- CORS configuration for frontend access
+- Route mounting at `/api`
+- Health check endpoint
+- Error handling middleware
+
+**`backend/models.py`**
+- Pydantic models for request/response validation
+- ChatRequest: user's query
+- ChatResponse: bot's answer with metadata
+- Type hints and field validation
+
+**`backend/router.py`**
+- POST /api/chat endpoint definition
+- Input validation (query length)
+- RAG agent invocation
+- Response formatting
+
+**`backend/rag_agent.py`**
+- RAGAgent class implementing retrieval-augmented generation
+- OpenAI Agents SDK integration
+- Query processing workflow
+- Response parsing and formatting
+
+**`backend/config.py`**
+- Environment variable configuration
+- Pydantic Settings for type-safe config
+- API keys, URLs, timeouts
+- Logging settings
+
+**`backend/data_retrieve.py`**
+- Content retrieval and preprocessing
+- Embedding generation
+- Metadata extraction
+
+**`backend/embeding_helpers.py`**
+- Helper functions for embedding operations
+- Vector normalization
+- Similarity calculations
+
+### Frontend Files
+
+**`docosaurus/docusaurus.config.ts`**
+- Docosaurus configuration
+- Theme settings
+- Sidebar structure
+- Navbar items
+- Footer links
+
+**`docosaurus/src/css/custom.css`**
+- Global color variables (1,136 lines)
+- Navbar gradient styling
+- Footer animated links
+- Hero section backgrounds
+- Component transitions
+- Dark mode overrides
+
+**`docosaurus/src/components/ChatWidget/index.tsx`**
+- Main chat widget component
+- Message state management
+- API communication
+- Auto-scrolling and focus
+- Error handling
+- Typing indicators
+
+**`docosaurus/src/components/ChatWidget/styles.css`**
+- FAB button styling (pulse animation)
+- Chat window styling (bouncy entrance)
+- Message bubble gradients
+- Input area styling
+- Responsive mobile adjustments
+
+**`docosaurus/src/components/HomepageFeatures/index.tsx`**
+- Module cards display
+- Feature boxes
+- Responsive grid layout
+- Icon rendering
+
+**`docosaurus/src/components/HomepageFeatures/styles.module.css`**
+- Module card styling (1,136 lines enhanced)
+- Feature box styling
+- Staggered animations
+- Hover effects with transforms
+- Gradient text effects
+
+## 🎓 Curriculum Structure
+
+### Module Organization
+```
+Module 0: Foundations
+├── Physical AI concepts
+├── Hardware vs Software
+└── Course overview
+
+Module 1: ROS 2 (Weeks 3-5)
+├── ROS 2 Architecture
+├── Nodes, Topics, Services
+├── Gazebo Simulation
+└── Practical projects
+
+Module 2: Control Systems (Weeks 6-7)
+├── Motion Planning
+├── Control Theory
+├── Trajectory Optimization
+└── Real-world applications
+
+Module 3: Isaac Sim (Weeks 8-10)
+├── Digital Twins
+├── Sim-to-Real Transfer
+├── Isaac Sim environment
+└── Deployment strategies
+
+Module 4: VLA & Humanoids (Weeks 11-13)
+├── Vision-Language-Action
+├── Humanoid Kinematics
+├── Humanoid Dynamics
+└── Conversational Robotics
+
+Capstone: End-to-End Project
+└── Full pipeline from simulation to real hardware
+```
+
 ## 🐛 Troubleshooting
+
+### Build Error: npm run build
+
+**Solution Steps:**
+1. Clear cache: `rm -rf .docusaurus node_modules`
+2. Reinstall deps: `npm install`
+3. Run build: `npm run build`
+4. If error persists, check for:
+   - TypeScript compilation errors
+   - Missing CSS imports
+   - Circular dependencies in components
 
 ### Backend Won't Start
 
@@ -434,17 +1055,46 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) for deta
 - **Qdrant** for vector database infrastructure
 - **Neon** for managed PostgreSQL
 
+## 🎨 Recent UI/UX Enhancements (December 18, 2025)
+
+### Global Styling
+- ✅ Vibrant emerald green primary color (#10b981) with purple accents
+- ✅ Gradient backgrounds and text effects throughout
+- ✅ Enhanced typography with Inter font for readability
+- ✅ Comprehensive dark mode support with proper contrast ratios
+
+### Navigation & Footer
+- ✅ Gradient navbar with animated underlines on links
+- ✅ Enhanced footer with animated bullet indicators
+- ✅ Smooth transitions on all interactive elements
+
+### Chat Widget
+- ✅ Pulsing gradient FAB button with enhanced shadows
+- ✅ Bouncy entrance animation with rounded corners
+- ✅ Gradient message bubbles with smooth transitions
+- ✅ Improved input area with better focus states
+
+### Homepage Features
+- ✅ Staggered fade-in animations for cards
+- ✅ Gradient text on titles and subtitles
+- ✅ Icon scale and 3D rotation effects on hover
+- ✅ Responsive design for all screen sizes
+
+**Total CSS Enhancements**: 1,136 lines | **Commits**: d4b64f1
+
 ## 🗺️ Roadmap
 
 ### Phase 1 (Dec 6 - Dec 13): Foundation ✅
 - [x] Project setup & CI/CD
 - [x] FastAPI + Docosaurus skeleton
 - [x] Database provisioning
+- [x] UI/UX enhancements with modern styling
 
 ### Phase 2 (Dec 13 - Dec 20): Infrastructure
 - [ ] Better-Auth integration (50 pts)
 - [ ] Personalization engine (50 pts)
 - [ ] Urdu translation service (50 pts)
+- [ ] Comprehensive documentation
 
 ### Phase 3 (Dec 20 - Dec 27): Core Features
 - [ ] RAG chatbot implementation
@@ -463,7 +1113,8 @@ Track platform metrics in real-time:
 - **Analytics Dashboard**: http://localhost:8000/admin/dashboard
 - **Cost Tracking**: http://localhost:8000/admin/costs
 - **Latency Monitoring**: http://localhost:8000/admin/metrics
+- **UI Performance**: Docosaurus Lighthouse score ≥90
 
 ---
 
-**Last Updated**: December 16, 2025 | **Status**: Phase 1 - Foundation ✅
+**Last Updated**: December 18, 2025 | **Status**: Phase 1 - Foundation ✅ | **Latest**: UI/UX Enhancement Complete
