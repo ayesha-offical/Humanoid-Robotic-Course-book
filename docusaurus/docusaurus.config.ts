@@ -147,7 +147,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Physical AI Course. All rights reserved. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Physical AI Course. All rights reserved. Built BY Ayesha Faisal ❤`,
     },
     prism: {
       theme: prismThemes.github,

@@ -32,7 +32,7 @@ def test_all_modules_retrieval():
         collection_info = qdrant.get_collection(collection_name)
         print(f"\nCollection: {collection_name}")
         print(f"Total data chunks loaded: {collection_info.points_count}")
-        print("✓ Data successfully saved to Qdrant!\n")
+        print("[OK] Data successfully saved to Qdrant!\n")
     except Exception as e:
         print(f"Error getting collection info: {e}")
         return
@@ -95,27 +95,27 @@ def test_all_modules_retrieval():
                     total_results += len(results.points)
                     text_preview = results.points[0].payload.get("text", "")[:80]
                     url = results.points[0].payload.get("url", "")
-                    print(f"  ✓ '{query}'")
+                    print(f"  [YES] '{query}'")
                     print(f"    -> Found relevant content from: {url.split('/')[-1]}")
                 else:
-                    print(f"  ✗ '{query}' - No content found")
+                    print(f"  [NO] '{query}' - No content found")
 
             except Exception as e:
-                print(f"  ✗ '{query}' - Error: {str(e)[:50]}")
+                print(f"  [ERR] '{query}' - Error: {str(e)[:50]}")
 
     print("\n" + "=" * 70)
     print("SUMMARY")
     print("=" * 70)
-    print(f"✓ Modules with data: {modules_with_data}/5")
-    print(f"✓ Total chunks available: {collection_info.points_count}")
-    print(f"✓ Successfully retrieved content from {total_results} chunks across queries")
+    print(f"[OK] Modules with data: {modules_with_data}/5")
+    print(f"[OK] Total chunks available: {collection_info.points_count}")
+    print(f"[OK] Successfully retrieved content from {total_results} chunks across queries")
 
     if modules_with_data == 5:
-        print("\n SUCCESS! All modules are properly loaded and retrievable!")
+        print("\n[SUCCESS] All modules are properly loaded and retrievable!")
     else:
-        print(f"\n WARNING: Only {modules_with_data} out of 5 modules have data")
+        print(f"\n[WARNING] Only {modules_with_data} out of 5 modules have data")
 
     print("=" * 70)
 
 if __name__ == "__main__":
-    test_module1_retrieval()
+    test_all_modules_retrieval()
