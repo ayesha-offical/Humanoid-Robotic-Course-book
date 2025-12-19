@@ -3,6 +3,12 @@ FastAPI application for RAG-powered chatbot API.
 Exposes the RAG agent logic via REST API endpoints.
 """
 
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models import ChatRequest, ChatResponse
