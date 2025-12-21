@@ -1104,11 +1104,6 @@ docker-compose logs backend -f
 ## 📊 Metrics
 
 Track platform metrics in real-time:
-- **Analytics Dashboard**: http://localhost:8000/admin/dashboard
-- **Cost Tracking**: http://localhost:8000/admin/costs
-- **Latency Monitoring**: http://localhost:8000/admin/metrics
-- **UI Performance**: Docosaurus Lighthouse score ≥90
+- **UI Performance**: Docosaurus Lighthouse score ≥96
 
----
 
-**Last Updated**: December 18, 2025 | **Status**: Phase 1 - Foundation ✅ | **Latest**: UI/UX Enhancement Complete
