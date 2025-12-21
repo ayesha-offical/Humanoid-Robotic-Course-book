@@ -24,14 +24,13 @@ This platform delivers:
 3. **🏗️ Production Infrastructure**:
    - GitHub Actions CI/CD pipelines
    - Comprehensive testing & monitoring
-   - Docker containerization for all services
    - Environment-based configuration management
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- **System**: Ubuntu 22.04 LTS (or equivalent Linux)
+- **System**: Still Window soon will switch to Ubuntu (WSL linux system)
 - **Node.js**: 18+ (for Docosaurus frontend)
 - **Python**: 3.10+ (for FastAPI backend)
 - **Git**: Latest version
@@ -84,7 +83,7 @@ npm start
 
 ### 1. Create Your First User Account
 
-Visit http://localhost:3000 and sign up with:
+Visit http://localhost:3000 and sign up with: (Adding soon)
 - Email: `test@example.com`
 - Password: Your secure password
 - Hardware Background: Select your experience level
@@ -97,12 +96,12 @@ Try these sample questions:
 - "What is the difference between MoveIt and Gazebo?"
 - "Walk me through the sim-to-real pipeline for a robotic arm"
 
-### 3. Enable Personalization
+### 3. Enable Personalization (Adding soon)
 
 - Click the "Personalize" toggle in the chatbot widget
 - The chatbot will adapt explanations to your experience level
 
-### 4. Try Urdu Translation
+### 4. Try Urdu Translation (Adding soon)
 
 - Select "Urdu" from the language switcher in the navbar
 - Browse lessons with Urdu translations of key terms
@@ -208,7 +207,6 @@ pytest tests/contract/
 
 Interactive API documentation is available at:
 - **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
 
 ### Key Endpoints
 
@@ -283,7 +281,7 @@ After PR review and tests pass, merge to `main` branch. This triggers:
 - Automatic deployment to staging
 - Optional: Auto-deploy to production
 
-## 🐳 Docker Deployment
+## 🐳 Docker Deployment (Adding soon)
 
 ### Build Docker Images
 
@@ -315,8 +313,8 @@ docker-compose down
 
 Target metrics:
 - **Chatbot Response**: p95 ≤ 3 seconds
-- **Personalization Latency**: <500ms overhead
-- **Translation Latency**: <1 second per chapter
+- **Personalization Latency**: <500ms overhead (soon)
+- **Translation Latency**: <1 second per chapter (soon)
 - **API Uptime**: 99.5% SLA
 - **Docosaurus Site Load**: <2 seconds (Lighthouse ≥90)
 
@@ -338,11 +336,11 @@ pytest tests/performance/test_translation_latency.py -v
 ## 🔐 Security
 
 - **Secrets Management**: Use `.env` file (never commit)
-- **Database**: Encrypted connections with Neon PostgreSQL
-- **Authentication**: JWT tokens via Better-Auth
-- **Password Hashing**: bcrypt with 12+ salt rounds
+- **Database**: Encrypted connections with Neon PostgreSQL (soon)
+- **Authentication**: JWT tokens via Better-Auth (soon)
+- **Password Hashing**: bcrypt with 12+ salt rounds (soon)
 - **API Rate Limiting**: 100 requests/min per user
-- **CORS**: Restricted to allowed origins
+- **CORS**: Restricted to allowed origins (soon)
 - **HTTPS**: Enforced in production
 
 Run security audit:
@@ -1041,11 +1039,7 @@ docker-compose logs backend -f
 
 - **Issues**: Report bugs on [GitHub Issues](https://github.com/ayesha-offical/Humanoid-Robotic-Course-book/issues)
 - **Discussions**: Ask questions in [GitHub Discussions](https://github.com/ayesha-offical/Humanoid-Robotic-Course-book/discussions)
-- **Email**: support@robotics-textbook.org
-
-## 📄 License
-
-This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
+- **Email**: ayeshamughal2513@gmail.com
 
 ## 🙏 Acknowledgments
 
@@ -1080,32 +1074,32 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) for deta
 - ✅ Icon scale and 3D rotation effects on hover
 - ✅ Responsive design for all screen sizes
 
-**Total CSS Enhancements**: 1,136 lines | **Commits**: d4b64f1
+**Total CSS Enhancements**: 1,136 lines 
 
 ## 🗺️ Roadmap
 
-### Phase 1 (Dec 6 - Dec 13): Foundation ✅
+### Phase 1 : Foundation ✅
 - [x] Project setup & CI/CD
 - [x] FastAPI + Docosaurus skeleton
 - [x] Database provisioning
 - [x] UI/UX enhancements with modern styling
 
-### Phase 2 (Dec 13 - Dec 20): Infrastructure
+### Phase 2 : Infrastructure
 - [ ] Better-Auth integration (50 pts)
 - [ ] Personalization engine (50 pts)
 - [ ] Urdu translation service (50 pts)
 - [ ] Comprehensive documentation
 
-### Phase 3 (Dec 20 - Dec 27): Core Features
+### Phase 3 : Core Features
 - [ ] RAG chatbot implementation
 - [ ] Module 1 content & demos
 
-### Phase 4 (Dec 27 - Nov 30): Completion & Launch
+### Phase 4 : Completion & Launch
 - [ ] Full curriculum content
 - [ ] Pre-launch testing
 - [ ] Production deployment
 
-**Hard Deadline**: November 30, 2025
+
 
 ## 📊 Metrics
 
